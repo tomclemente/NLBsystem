@@ -10,8 +10,7 @@ class Controller {
 		Entity computer[];
 		Entity retrieved;
 		Entity nextPacket;
-		Entity currServer;
-		Entity nextServer;
+
 		timeTable table;
 		CurrentTime curr_time;
 		
@@ -23,12 +22,12 @@ class Controller {
 	
 	Queue nlb,serverfarm,global,q_server[];
 	curr_time = new CurrentTime();
-	int x,nextTime,depart,dummy,dummy2,ctr;
+	int x,nextTime,depart,ctr,index = 0;
 	int clock = 0;
-	//int daylen = 86400;
 	int daylen = 99999;
-	int requests = 90;
-	int serverLimit = 4;
+	int requests = 900000;
+	int serverLimit = 3;
+	long startTime=0, endTime, totalTime;
 	nlb = new Queue();
 	serverfarm = new Queue();
 	global = new Queue();
@@ -42,11 +41,10 @@ class Controller {
 		q_server[x] = new Queue();
 		
 	}
-	server[0] = new Server(1,18,"Server1");
-	server[1] = new Server(2,18,"Server2");
-	server[2] = new Server(3,18,"Server3");
-	server[3] = new Server(3,18,"Server4");
-	
+	server[0] = new Server(1,1,"Server1");
+	server[1] = new Server(2,10,"Server2");
+	server[2] = new Server(3,1,"Server3");
+
 	ctr = requests;
 	computer = new Entity[requests+2];
 	for(x=0; x<requests;x++){
@@ -78,7 +76,9 @@ class Controller {
 		ctr--;
 	//	secondTime = (int) System.currentTimeMillis();
 		switch(eventArrived){
+		
 		case 1: //start of the day
+		startTime = System.currentTimeMillis();
 			serverfarm.erase(retrieved);
 			global.addTo(retrieved);
 			/* nextTime = clock +
@@ -89,8 +89,7 @@ class Controller {
 			//System.out.println("dummy2"+dummy2);
 			//System.out.println(dummy + "seconds");
 			nextTime = clock + (int) System.currentTimeMillis();
-		//System.out.println(clock);
-			//System.out.println(nextTime);
+		
 			nextPacket = (Entity) nlb.randomSelect(); //ang queue gihimog entity
 			table.setim(nextPacket, nextTime);
 			nextPacket.event = 2;
@@ -99,52 +98,21 @@ class Controller {
 		
 		case 2: //arrival of packet sa serverfarm
 				System.out.println(retrieved.value + " arrived at NLB:" + curr_time.getMinute(System.currentTimeMillis()) + "minutes and "+ curr_time.getSecond(System.currentTimeMillis()) + "seconds");
-				//Server.sort(server);
-				System.out.println(Server.getHighestWeight(server));
 				
 				serverfarm.addTo(retrieved);
-				//determine first the highest weight available
+				index = Algorithm.WRR(server);
+				q_server[index].addTo(retrieved);
+				server[index].consumeRequest();
+				
+							//determine first the highest weight available
 				//decide if any servers are available
 				//decide the biggest available weight..
 					//check for availability in the highest server weight
 						//if the same weight, deduct.. 
 					//if unavailable move to next weight.
-				//server[3]=5	 server[2]=3	 server[3]=1
-								
 				
 				
-				/*		for(x=0; x<serverLimit; x++) {
-				if(server[x].getWeight()==10){
-					if(server[x].availability()){
-						server[x].consumeRequest();
-						q_server[x].addTo(retrieved);
-					}
-					
-				}
-				if(server[x].getWeight()==9) {
-					
-					
-				}	
 				
-			} 
-				switch(server[x].getWeight()){
-				case 10:
-				case 9:
-				case 8:
-				case 7:
-				case 6:
-				case 5:
-				case 4:
-				case 3:
-				case 2:
-				case 1:
-					default:
-				
-				
-				}
-				
-				*/
-				//how to determine the highest weight
 				
 				
 				
@@ -165,8 +133,9 @@ class Controller {
 					
 	                break;
 		case 3: //departure of packet
-			 System.out.println(retrieved.value + " left at time :" +
-					 System.currentTimeMillis());
+			  server[index].allocateRequest();
+			  System.out.println(retrieved.value + " left at time :" +
+			  System.currentTimeMillis());
 			  serverfarm.erase(retrieved);
 			  nlb.addTo(retrieved);
 			  break;
@@ -193,6 +162,8 @@ class Controller {
 			global.addTo(retrieved);
 			
 		}
+		endTime = System.currentTimeMillis();
+	totalTime = endTime - startTime;
 	
 		System.out.println("stoped at :" + retrieved.value + 
                 " time: " + clock+ " event: " +
@@ -203,10 +174,11 @@ class Controller {
                         /*Print the sizes of all the queues*/
  System.out.println("NLB size " + nlb.size());
  System.out.println("serverfarm size " + serverfarm.size());
- System.out.println("global size " + global.size());
-	
-	
-	
+ System.out.println("server1 size " + q_server[0].size());
+ System.out.println("server2 size " + q_server[1].size());
+ System.out.println("server3 size " + q_server[2].size());
+ System.out.println("Simulation time "+ CurrentTime.getMinute(totalTime) +" minutes" +CurrentTime.getSecond(totalTime) + " seconds.");
+
 	}
 
 
