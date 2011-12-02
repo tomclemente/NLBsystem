@@ -98,29 +98,20 @@ public class Server {
 	
 	public static int getHighestWeight(Server server[]){
 		int y = server.length;
-		
+		int x_val = 1;
+		int current_index = 0;
 		int server_var = server[0].getWeight();
 		for(int x=0; x<y; x++) {
-			//System.out.println("waax" +x);
-			for(int j=x; j>0; j--) {
-				System.out.println("waa" +j);
-				if( ((int) server[j-1].getWeight() > ((Server)server[j]).getWeight() )) {
-					server_var = server[j-1].getWeight();
-				}
-				else {
-					server_var = server[j].getWeight();
-				}
-				
-			}
+			System.out.println("x: " +x);
 			
+			if(((Server) server[x]).getWeight()>=x_val) {
+				x_val=((Server)server[x]).getWeight();
+				current_index=x;
+			}
+
 		
 		}
-		//System.out.println("WEE:" +y);
-		if( ((int) server[y-1].getWeight() > ((Server)server[y-2]).getWeight() )) {
-			server_var = server[y-1].getWeight();
-		}
 		
-		
-		return server_var;
+		return current_index;
 	}
 }

@@ -28,7 +28,7 @@ class Controller {
 	//int daylen = 86400;
 	int daylen = 99999;
 	int requests = 90;
-	int serverLimit = 3;
+	int serverLimit = 4;
 	nlb = new Queue();
 	serverfarm = new Queue();
 	global = new Queue();
@@ -42,10 +42,10 @@ class Controller {
 		q_server[x] = new Queue();
 		
 	}
-	server[0] = new Server(1,5,"Server1");
-	server[1] = new Server(2,6,"Server2");
-	server[2] = new Server(3,7,"Server3");
-	
+	server[0] = new Server(1,18,"Server1");
+	server[1] = new Server(2,18,"Server2");
+	server[2] = new Server(3,18,"Server3");
+	server[3] = new Server(3,18,"Server4");
 	
 	ctr = requests;
 	computer = new Entity[requests+2];
