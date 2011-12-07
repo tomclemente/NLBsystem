@@ -23,7 +23,7 @@ public class CurrentTime{
 		
 	}
  
-	public static int getSecond(long time){
+	public int getSecond(long time){
 		
 	
 		int seconds = (int) ((time/1000) % 60);
@@ -31,13 +31,13 @@ public class CurrentTime{
 		
 	}
 	
-	public static int getMinute(long time) {
+	public int getMinute(long time) {
 		
 		int minutes = (int) ((time/(1000*60)) % 60);
 		return minutes;
 	}
 	
-	public static int getHour(long time) {
+	public int getHour(long time) {
 		int hours = (int) ((time/(1000*60*60)) % 24);
 		return hours;
 		

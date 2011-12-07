@@ -1,5 +1,6 @@
 package pack;
 
+import java.lang.reflect.Array;
 
 public class Server {
 
@@ -24,7 +25,7 @@ public class Server {
 			case 2: max_requests=100; break;
 			case 1: max_requests=30; break;
 			default:
-			max_requests=1000;
+			
 			}
 	}
 	
@@ -59,22 +60,56 @@ public class Server {
 		return weight;
 	}
 	
+	@SuppressWarnings("null")
+	public static void sort(Server server[]){
+		int N = server.length;
+		
+		int dummy[] = null;
+		
+		System.out.println("WEEE "+((Server) server[1]).getWeight());
+		
+		for(int x=0; x<=2; x++) {
+	//	((Server) server[x]).getWeight().sort();
+	//	Arrays.sort(((Server) server[]).getWeight());
+			//Arrays.sort((Server) server).getWeight() );
+	//	dummy[x]=((Server) server[x]).getWeight();
+		
+		}
+		
+		for(int x=0; x<N; x++) {
+			if( ((Server) server[x]).getWeight() > ((Server) server[x+1]).getWeight()) {
+				
+			}
+		}
+		
+		/* 	for(int x=0; x<N; x++) {
+			 for (int j=x; j>0; j--) {
+				
+				 if( ((Server) server[j-1]).getWeight().compareTo((Server) server[j]).getWeight() > 0);
+				 
+					if(server[j-1].compareTo(server[j]) > 0)
+		             exch(server, j, j-1);
+		         else break;
+			 }
+			
+		}*/
+		
+	}
 	
 	public static int getHighestWeight(Server server[]){
 		int y = server.length;
 		int x_val = 1;
 		int current_index = 0;
-		
+		int server_var = server[0].getWeight();
 		for(int x=0; x<y; x++) {
-		
+			System.out.println("x: " +x);
 			
 			if(((Server) server[x]).getWeight()>=x_val) {
-				
-				if((server[x].getRequest())>0) {
 				x_val=((Server)server[x]).getWeight();
 				current_index=x;
-				}
 			}
+
+		
 		}
 		
 		return current_index;
