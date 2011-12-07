@@ -25,7 +25,7 @@ class Controller {
 	int x,nextTime,depart,ctr,index = 0;
 	int clock = 0;
 	int daylen = 99999;
-	int requests = 900000;
+	int requests = 900;
 	int serverLimit = 3;
 	long startTime=0, endTime, totalTime;
 	nlb = new Queue();
@@ -72,50 +72,51 @@ class Controller {
 	retrieved = table.scan();
 	clock = retrieved.time;	
 	eventArrived = retrieved.event;
-	while(eventArrived != 10 && ctr!=0) {
+	while(eventArrived != 10) {
 		ctr--;
 	//	secondTime = (int) System.currentTimeMillis();
 		switch(eventArrived){
 		
 		case 1: //start of the day
-		startTime = System.currentTimeMillis();
+			startTime = System.currentTimeMillis();
 			serverfarm.erase(retrieved);
+		
 			global.addTo(retrieved);
 			/* nextTime = clock +
 					(int) Math.floor(Math.random() * 1000); */
-			
+
 			//dummy=curr_time.getHour(System.currentTimeMillis());
 			//dummy2 = System.currentTimeMillis();
 			//System.out.println("dummy2"+dummy2);
 			//System.out.println(dummy + "seconds");
+			System.out.println("WES");
 			nextTime = clock + (int) System.currentTimeMillis();
 		
 			nextPacket = (Entity) nlb.randomSelect(); //ang queue gihimog entity
 			table.setim(nextPacket, nextTime);
-			nextPacket.event = 2;
+			nextPacket.event = 4;
 			break;
 		
 		
-		case 2: //arrival of packet sa serverfarm
+		case 4: //arrival of packet sa serverfarm
 				System.out.println(retrieved.value + " arrived at NLB:" + curr_time.getMinute(System.currentTimeMillis()) + "minutes and "+ curr_time.getSecond(System.currentTimeMillis()) + "seconds");
 				
 				serverfarm.addTo(retrieved);
 				index = Algorithm.WRR(server);
+				System.out.println("weeee2");
+				System.out.println("WEAAS");
 				q_server[index].addTo(retrieved);
 				server[index].consumeRequest();
 				
-							//determine first the highest weight available
+				
+				
+				//determine first the highest weight available
 				//decide if any servers are available
 				//decide the biggest available weight..
 					//check for availability in the highest server weight
-						//if the same weight, deduct.. 
+					//if the same weight, deduct.. 
 					//if unavailable move to next weight.
-				
-				
-				
-				
-				
-				
+	
 				
 				    depart = (int)  Math.floor(Math.random() * 3);
 	                if(depart != 0){ /* some will never depart*/
@@ -127,7 +128,7 @@ class Controller {
 	                nextTime = clock +
 	                           (int) Math.floor(Math.random() * 1000);
 	                nextPacket = (Entity) nlb.randomSelect();
-	                nextPacket.event = 2; /*arrival*/
+	                nextPacket.event = 4; /*arrival*/
 	                table.setim(nextPacket, nextTime);
 
 					
@@ -177,7 +178,7 @@ class Controller {
  System.out.println("server1 size " + q_server[0].size());
  System.out.println("server2 size " + q_server[1].size());
  System.out.println("server3 size " + q_server[2].size());
- System.out.println("Simulation time "+ CurrentTime.getMinute(totalTime) +" minutes" +CurrentTime.getSecond(totalTime) + " seconds.");
+ System.out.println("Simulation time "+ CurrentTime.getMinute(totalTime) +" minutes and " +CurrentTime.getSecond(totalTime) + " seconds.");
 
 	}
 
