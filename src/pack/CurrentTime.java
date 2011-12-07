@@ -6,7 +6,7 @@ public class CurrentTime{
 	
 
 
-	public void GetCurrentTime() {
+	public static void GetCurrentTime() {
 		String am_pm;
 
 		Calendar calendar = new GregorianCalendar();
@@ -23,7 +23,7 @@ public class CurrentTime{
 		
 	}
  
-	public static int getSecond(long time){
+	public int getSecond(long time){
 		
 	
 		int seconds = (int) ((time/1000) % 60);
@@ -31,7 +31,7 @@ public class CurrentTime{
 		
 	}
 	
-	public static int getMinute(long time) {
+	public int getMinute(long time) {
 		
 		int minutes = (int) ((time/(1000*60)) % 60);
 		return minutes;

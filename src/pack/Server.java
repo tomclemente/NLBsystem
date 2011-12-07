@@ -20,9 +20,9 @@ public class Server {
 			case 6: max_requests=2000; break;
 			case 5: max_requests=1000; break;
 			case 4: max_requests=500; break;
-			case 3: max_requests=250; break;
-			case 2: max_requests=100; break;
-			case 1: max_requests=30; break;
+			case 3: max_requests=3; break;
+			case 2: max_requests=2; break;
+			case 1: max_requests=1; break;
 			default:
 			max_requests=1000;
 			}
@@ -66,7 +66,7 @@ public class Server {
 		int current_index = 0;
 		
 		for(int x=0; x<y; x++) {
-		
+	
 			
 			if(((Server) server[x]).getWeight()>=x_val) {
 				
@@ -75,7 +75,17 @@ public class Server {
 				current_index=x;
 				}
 			}
+			if(current_index==0) {
+				if(server[x].getRequest()<0) {
+					//loop back, add delay
+					//getHighestWeight(server);
+					//current_index=(Integer) null;
+					
+				}
+			}
 		}
+		
+		
 		
 		return current_index;
 	}

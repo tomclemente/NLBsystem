@@ -12,7 +12,7 @@ class Controller {
 		Entity nextPacket;
 
 		timeTable table;
-		CurrentTime curr_time;
+		CurrentTime CurrentTime;
 		
 		Server server[];
 		
@@ -21,11 +21,12 @@ class Controller {
 	int eventArrived;
 	
 	Queue nlb,serverfarm,global,q_server[];
-	curr_time = new CurrentTime();
-	int x,nextTime,depart,ctr,index = 0;
+	CurrentTime = new CurrentTime();
+	int x,nextTime,depart,index = 0;
 	int clock = 0;
-	int daylen = 99999;
-	int requests = 900;
+	int daylen = 9999999;
+	int requests = 1000000;
+	//int requests = 20;
 	int serverLimit = 3;
 	long startTime=0, endTime, totalTime;
 	nlb = new Queue();
@@ -42,10 +43,10 @@ class Controller {
 		
 	}
 	server[0] = new Server(1,1,"Server1");
-	server[1] = new Server(2,10,"Server2");
-	server[2] = new Server(3,1,"Server3");
+	server[1] = new Server(2,2,"Server2");
+	server[2] = new Server(3,3,"Server3");
 
-	ctr = requests;
+	//ctr = requests;
 	computer = new Entity[requests+2];
 	for(x=0; x<requests;x++){
 		computer[x] = new Entity(x, new String("" + x));}
@@ -66,15 +67,15 @@ class Controller {
 	computer[requests+1].event = 10; //set end for end of the day
 	
 	table = new timeTable();
-	table.setim(computer[requests], 0);
+	table.setim(computer[requests], clock);
 	table.setim(computer[requests+1], daylen);
 	table.printTable();
 	retrieved = table.scan();
 	clock = retrieved.time;	
 	eventArrived = retrieved.event;
 	while(eventArrived != 10) {
-		ctr--;
-	//	secondTime = (int) System.currentTimeMillis();
+		
+		
 		switch(eventArrived){
 		
 		case 1: //start of the day
@@ -82,32 +83,28 @@ class Controller {
 			serverfarm.erase(retrieved);
 		
 			global.addTo(retrieved);
-			/* nextTime = clock +
-					(int) Math.floor(Math.random() * 1000); */
+			nextTime = clock +
+					(int) Math.floor(Math.random() * 1000); 
 
-			//dummy=curr_time.getHour(System.currentTimeMillis());
-			//dummy2 = System.currentTimeMillis();
-			//System.out.println("dummy2"+dummy2);
-			//System.out.println(dummy + "seconds");
-			System.out.println("WES");
-			nextTime = clock + (int) System.currentTimeMillis();
 		
+			System.out.println(nextTime);
 			nextPacket = (Entity) nlb.randomSelect(); //ang queue gihimog entity
 			table.setim(nextPacket, nextTime);
-			nextPacket.event = 4;
+			nextPacket.event = 2;
 			break;
 		
 		
-		case 4: //arrival of packet sa serverfarm
-				System.out.println(retrieved.value + " arrived at NLB:" + curr_time.getMinute(System.currentTimeMillis()) + "minutes and "+ curr_time.getSecond(System.currentTimeMillis()) + "seconds");
+		case 2: //arrival of packet sa serverfarm
+				System.out.println(retrieved.value + " arrived at NLB:" + CurrentTime.getMinute(System.currentTimeMillis()) + "minutes and "+ CurrentTime.getSecond(System.currentTimeMillis()) + "seconds");
 				
 				serverfarm.addTo(retrieved);
-				index = Algorithm.WRR(server);
-				System.out.println("weeee2");
-				System.out.println("WEAAS");
+				//index = Algorithm.WRR(server);
+				index = Server.getHighestWeight(server);
+					//determine if the current index maxrequest, add delay
 				q_server[index].addTo(retrieved);
 				server[index].consumeRequest();
-				
+				System.out.println("indexnum" +index);
+				System.out.println("req" +server[index].getRequest());
 				
 				
 				//determine first the highest weight available
@@ -128,17 +125,19 @@ class Controller {
 	                nextTime = clock +
 	                           (int) Math.floor(Math.random() * 1000);
 	                nextPacket = (Entity) nlb.randomSelect();
-	                nextPacket.event = 4; /*arrival*/
+	                nextPacket.event = 2; /*arrival*/
 	                table.setim(nextPacket, nextTime);
 
 					
 	                break;
 		case 3: //departure of packet
 			  server[index].allocateRequest();
-			  System.out.println(retrieved.value + " left at time :" +
-			  System.currentTimeMillis());
-			  serverfarm.erase(retrieved);
-			  nlb.addTo(retrieved);
+			//  System.out.println(retrieved.value + " left at time :" +
+					  System.out.println(retrieved.value + " left at NLB:" + CurrentTime.getMinute(System.currentTimeMillis()) + "minutes and "+ CurrentTime.getSecond(System.currentTimeMillis()) + "seconds");
+				
+					  //System.currentTimeMillis());
+			//  serverfarm.erase(retrieved);
+			  nlb.erase(retrieved);
 			  break;
 		
 		
@@ -164,15 +163,12 @@ class Controller {
 			
 		}
 		endTime = System.currentTimeMillis();
-	totalTime = endTime - startTime;
+		//System.out.println("SA"+endTime);
+		totalTime = endTime - startTime;
 	
-		System.out.println("stoped at :" + retrieved.value + 
-                " time: " + clock+ " event: " +
-                    eventArrived);
+ System.out.println("stoped at :" + retrieved.value + " time: " + clock+ " event: " +eventArrived);
  System.out.println("No items " + (requests + 2));
- System.out.println("No items found " + (nlb.size() +
-		 serverfarm.size() + global.size()));
-                        /*Print the sizes of all the queues*/
+ System.out.println("No items found " + (nlb.size() +serverfarm.size() + global.size())); /*Print the sizes of all the queues*/
  System.out.println("NLB size " + nlb.size());
  System.out.println("serverfarm size " + serverfarm.size());
  System.out.println("server1 size " + q_server[0].size());
