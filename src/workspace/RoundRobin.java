@@ -26,13 +26,14 @@ public class RoundRobin {
 	
 	
 		int eventArrived;
+	
 		
 		Queue nlb,serverfarm,global;
 		CurrentTime = new CurrentTime();
 		int x,nextTime,depart,index = 0;
 		int clock = 0;
 		int daylen = 888000;
-		int requests = 10;
+		int requests = 100;
 		//int requests = 20;
 
 		long startTime=0, endTime, totalTime;
@@ -152,8 +153,7 @@ public class RoundRobin {
 	                }
 	                
 	    
-	                nextTime = clock +
-	                           (int) Math.floor(Math.random() * 1000);
+	                nextTime = clock + (int) Math.floor(Math.random() * 1000);
 	             
 	                /* 
 	                if(index==0) {
@@ -175,10 +175,9 @@ public class RoundRobin {
                 	}
                 	*/
 	                
-	                index=(index+1)%3;
-	                
-	                //if no servers are available, wait();
-	                ConnectionPool cons = new ConnectionPool();
+	           
+//if no servers are available, wait();
+//ConnectionPool cons = new ConnectionPool();
 	                
 	                nextPacket = (Entity) nlb.randomSelect();
 	                server[index].consumeRequest();
@@ -186,10 +185,15 @@ public class RoundRobin {
 	                //System.out.println("nextpacket:" +nextPacket);
 	                nextPacket.event = 2;
             		table.setim(nextPacket, nextTime);
-					
+            		index=(index+1)%3;
+            		
+            		//full request timeout
+            		
 	                break;
 		case 3: //departure of packet
-			  		server[index].allocateRequest();
+		  	  		server[index].allocateRequest();
+			  	   
+		                
 			//  System.out.println(retrieved.value + " left at time :" +
 			  		System.out.println(retrieved.value + " left at NLB: " + CurrentTime.getMinute(System.currentTimeMillis()) + "minutes and "+ CurrentTime.getSecond(System.currentTimeMillis()) + "seconds");	
 			//System.currentTimeMillis());
