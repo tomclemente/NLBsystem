@@ -19,6 +19,7 @@ public class UserToNLB implements Runnable{
 				NLB.assignReqToServ(temporaryUser);
 				System.out.println("Schedule for User No. "+(count+1)+" is Server No."+NLB.getSchedule());
 				Controller.flag = 1;
+				
 			}
 		}
 	}

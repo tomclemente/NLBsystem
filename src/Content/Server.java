@@ -89,11 +89,11 @@ public class Server {
 		ProcessingTime = (tempUser.getUserRequest()*100) / ServerWeight;
 		
 		ProcessRequest tempProcessRequest = new ProcessRequest(ProcessingTime, tempUser);
-	//	ProcessingTime = tempUser.getUserRequest()  / 0; 
+		//	ProcessingTime = tempUser.getUserRequest()  / 0; 
 		//if(Connection.peek() != null){
 		//	String tempRequest;
 		//	tempRequest = (String) Connection.peek();
-			//Request = Integer.parseInt(tempRequest);
+		//Request = Integer.parseInt(tempRequest);
 		//}
 	}
 	
@@ -162,6 +162,14 @@ public class Server {
 	
 	public int getServerWeight(){
 		return this.ServerWeight;
+	}
+	public void consumeRequest() {
+		this.ServerMaxConn--;
+	}
+	public void allocateRequest() {
+		
+		this.ServerMaxConn++;
+		
 	}
 	
 	public int getServerMaxConn(){

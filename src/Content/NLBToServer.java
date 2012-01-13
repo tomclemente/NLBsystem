@@ -12,6 +12,8 @@ public class NLBToServer implements Runnable{
 	}
 	
 	public void run(){
+		
+		//travel time for all the algorithms
 		if((temporaryUser.getUserDelayServer() >= 0) && (temporaryUser.getUserDelayNLB() == -1) && (flag == 2)){
 			System.out.println("User Request No.: "+(count+1)+" going to Server IP. "+temporaryUser.getUserDestination()+" | Delay: "+temporaryUser.getUserDelayServer());
 			temporaryUser.setUserDelayServer(temporaryUser.getUserDelayServer() -1);

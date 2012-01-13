@@ -27,7 +27,8 @@ public class NLB {
 	
 	public static void setSchedule(int SchedulingAlgorithm){
 		if(SchedulingAlgorithm == 1){
-			
+			RR tempRR = new RR();
+			Schedule = tempRR.RR();
 		}
 		else if(SchedulingAlgorithm == 2){
 			LCS tempLCS = new LCS();

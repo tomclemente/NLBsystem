@@ -1,20 +1,19 @@
-package workspace;
+package Content;
 
 import java.util.ArrayList;
 
-import pack.CurrentTime;
-import pack.Entity;
-import pack.Queue;
-import pack.timeTable;
+
+
 
 public class RoundRobin {
+
 	
-	public Queue q_server[];
-	public int serverLimit = 3;
-	public Server server[];
-	
-	
-	public RoundRobin() {
+	private Queue q_server[];
+	private int serverLimit = Controller.ServerCount;
+	private Server server[];
+	private int requests = Controller.OverAllRequests;
+	//private int Users = Controller.UserCount;
+	public RoundRobin()  {
 		//Entity computer[];
 		Entity retrieved;
 		Entity nextPacket = null;
@@ -22,19 +21,14 @@ public class RoundRobin {
 		timeTable table;
 		CurrentTime CurrentTime;
 		//User user[];
-		
-	
-	
-		int eventArrived;
-	
-		
+				
 		Queue nlb,serverfarm,global;
 		CurrentTime = new CurrentTime();
-		int x,nextTime,depart,index = 0;
+		int x,nextTime,index = 0;
 		int clock = 0;
 		int daylen = 888000;
-		int requests = 100;
-		//int requests = 20;
+		int eventArrived;
+
 
 		long startTime=0, endTime, totalTime;
 		nlb = new Queue();
@@ -46,23 +40,19 @@ public class RoundRobin {
 		ArrayList<Entity> computer = new ArrayList<Entity>(requests+2);
 		
 		//queueing server
-		q_server = new Queue[3];
+		q_server = new Queue[serverLimit-1];
+		server = new Server[serverLimit-1];
+		
+		for(x=0; x<=serverLimit-1; x++) {
+			//(int ServerNumber,String ServerName,String ServerIP,int ServerWeight)
+			server[x] = Controller.temporaryServer[x];
+			q_server[x] = new Queue();	}
 	
-		server = new Server[serverLimit];
 		
-		for(x=0; x<3; x++) {
-			server[x] = new Server(x,0,"dummy");	}
-		
-		for(x=0; x<3; x++) {
-			q_server[x] = new Queue();		}
-		
-		server[0] = new Server(1,1,"Server1");
-		server[1] = new Server(2,1,"Server2");
-		server[2] = new Server(3,1,"Server3");
 	
 		//ctr = requests;
-		for(x=0; x<requests; x++)
-		computer.add(new Entity(x, new String("" + x)));
+		for(x=0; x<requests; x++) {
+		computer.add(new Entity(x, new String("" + x))); }
 
 		
 		//computer = new Entity[requests+2];
@@ -123,9 +113,11 @@ public class RoundRobin {
 				System.out.println(retrieved.value + " arrived at NLB: " + CurrentTime.getMinute(System.currentTimeMillis()) + "minutes and "+ CurrentTime.getSecond(System.currentTimeMillis()) + "seconds");
 				prevPacket = nextPacket;
 				
+				//some delay
+			
 				//packet arrived to the server farm
 				serverfarm.addTo(retrieved);
-				
+				index=(index+1)%3;
 				//index = Server.getHighestWeight(server);
 				
 				//determine if the current index maxrequest, add delay
@@ -133,7 +125,7 @@ public class RoundRobin {
 				//System.out.println("indexnum" +index);
 				
 				System.out.println("index: "+index);
-				System.out.println("requests: " +server[index].getRequest());
+				System.out.println("requests: " +server[index].getServerMaxConn());
 				
 				
 				//determine first the highest weight available
@@ -144,38 +136,31 @@ public class RoundRobin {
 					//if unavailable move to next weight.
 					
 				
+				
+				//NLB to server//
+				
+				
+				/*
 				    depart = (int)  Math.floor(Math.random() * 3);
-	                if(depart != 0){ /* some will never depart*/
+	                if(depart != 0){ 
 	                  nextTime = clock +
 	                             (int) Math.floor(Math.random() * 600);
 	                  table.setim(retrieved,nextTime);
-	                  retrieved.event = 3; /*departure*/
-	                }
-	                
+	                  retrieved.event = 3;
+	                } */
+				
+				
+			//	Runnable runnable2 = new NLBToServer(temporaryUser[count],flag,count);
+			//	Thread thread2 = new Thread(runnable2);
+				
+			//	thread2.start();
+				
 	    
 	                nextTime = clock + (int) Math.floor(Math.random() * 1000);
 	             
-	                /* 
-	                if(index==0) {
-	                	if((server[0].getRequest())==0) {
-	                		System.out.println("tom:" +server[0].getRequest());
-	                		nextPacket = prevPacket;	
-	                	}
-	                	else {
-	                		nextPacket = (Entity) nlb.randomSelect();
-	                		server[index].consumeRequest();
-	                	}
-	                }
-	                // if index is not zero
+	              
 	                
-	 
-                	if(index!=0) {
-                		nextPacket = (Entity) nlb.randomSelect();
-                		server[index].consumeRequest();
-                	}
-                	*/
-	                
-	           
+//if no servers are available, request time out.	           
 //if no servers are available, wait();
 //ConnectionPool cons = new ConnectionPool();
 	                
@@ -185,7 +170,10 @@ public class RoundRobin {
 	                //System.out.println("nextpacket:" +nextPacket);
 	                nextPacket.event = 2;
             		table.setim(nextPacket, nextTime);
-            		index=(index+1)%3;
+            	
+            	
+            		
+            		
             		
             		//full request timeout
             		

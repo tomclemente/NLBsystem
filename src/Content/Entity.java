@@ -1,4 +1,4 @@
-	package pack;
+package Content;
 /**
  * This Class is used to store information related to an entity.
  * To create an entity:

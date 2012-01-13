@@ -3,13 +3,10 @@ package Content;
 import java.io.*;
 
 public class Controller {
-	public static int ServerCount = 0;
-	public static int flag = 0;
-	
-	
-	
+	protected static int ServerCount = 0;
+	protected static int flag = 0;
 	/* User */
-	public static int UserCount;
+	protected static int UserCount;
 
 	/**
 	 * Server
@@ -18,7 +15,8 @@ public class Controller {
 	static String ServerIP;
 	static int ServerWeight;
 	static Server temporaryServer[] = new Server[1000];
-
+	public static int Request;
+	public static int OverAllRequests;
 	/**
 	 * @param args
 	 * @throws InterruptedException 
@@ -34,7 +32,7 @@ public class Controller {
 		 * User
 		 */
 		String UserName,UserIP,Destination;
-		int Request;
+	    
 		int Bandwidth;
 		User temporaryUser[] = new User[1000];
 		float UserDelayNLB,UserDelayServer;
@@ -69,12 +67,14 @@ public class Controller {
 			System.out.println("Server Weight: "+temporaryServer[temp].getServerWeight());
 			System.out.println("Server Maximum Connections: "+temporaryServer[temp].getServerMaxConn());
 			System.out.println("\n");
+			
 		}
+		
 		
 		System.out.println("How many users do you want? ");
 		UserCount = Integer.parseInt(test.readLine());
 		System.out.println("\n");
-		
+		OverAllRequests = 0;
 		/* Gets Information for the User */
 		for(temp = 0; temp <= UserCount-1; temp++){
 			System.out.println("User Name: ");
@@ -114,7 +114,7 @@ public class Controller {
 			UserDelayServer = -1;
 			Destination = null;
 			LifeStatus = true;
-			
+			OverAllRequests = OverAllRequests + Request;
 			temporaryUser[temp] = new User((temp+1),UserName,UserIP,Request,Bandwidth,UserDelayNLB,UserDelayServer,Destination,LifeStatus);
 			System.out.println("\n");
 		}
@@ -133,7 +133,7 @@ public class Controller {
 
 		// Choose Scheduling Algorithm
 		System.out.println("Choose Scheduling Algorithm:");
-		System.out.println("[1] Weighted Round-Robin");
+		System.out.println("[1] Round-Robin");
 		System.out.println("[2] Least Connection");
 		System.out.println("[3] Minimum-Expected Delay");
 		
@@ -142,7 +142,7 @@ public class Controller {
 		NLB.setSchedule(AlgoChoice);
 		switch(AlgoChoice){
 		case 1:
-			System.out.println("Weighted Round-Robin Scheduling Algorithm");
+			System.out.println("Round-Robin Scheduling Algorithm");
 			break;
 		case 2:
 			System.out.println("Least Connection Scheduling Algorithm");
@@ -154,37 +154,42 @@ public class Controller {
 			System.out.println("Empty!");
 			break;
 		}
+	
 		
 		/* Simulation Starts Here */
-		System.out.println("Simulation starts in 3...");
-		Thread.sleep(1000);
-		for(int x = 2; x>0; x--){
-			System.out.println(x);
+			System.out.println("Simulation starts in 3...");
 			Thread.sleep(1000);
-		}
+			for(int x = 2; x>0; x--){
+				System.out.println(x);
+				Thread.sleep(1000);
+			}
 		
 		// The Process
 		
-		while(true){
-			System.out.println("\n\n\n\n\n\n\n");
-			for(int count = 0; count <= UserCount - 1; count++){
+			while(true){
+				System.out.println("\n\n\n\n\n\n\n");
+				for(int count = 0; count <= UserCount - 1; count++){
+				
+					Runnable runnable1 = new UserToNLB(temporaryUser[count],flag,count);
+					Thread thread1 = new Thread(runnable1);
+					//thread1.stop();
+					thread1.start();
+					
+					Runnable runnable2 = new NLBToServer(temporaryUser[count],flag,count);
+					Thread thread2 = new Thread(runnable2);
+					//thread2.stop();
+					thread2.start();
+					
+					
+					if(flag == 1)
+						flag = 2;
+				}
+				Thread.sleep(100);
+				NLB.setSchedule(AlgoChoice);
+			} 
 			
-				Runnable runnable1 = new UserToNLB(temporaryUser[count],flag,count);
-				Thread thread1 = new Thread(runnable1);
-				//thread1.stop();
-				thread1.start();
-				
-				Runnable runnable2 = new NLBToServer(temporaryUser[count],flag,count);
-				Thread thread2 = new Thread(runnable2);
-				//thread2.stop();
-				thread2.start();
-				
-				
-				if(flag == 1)
-					flag = 2;
-			}
-			Thread.sleep(1000);
-			NLB.setSchedule(AlgoChoice);
-		}
+		
+			
 	}
 }
+
